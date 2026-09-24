@@ -18,11 +18,11 @@ my_hrk_api = "https://thor-x1-api.vercel.app"
 my_auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjIyMzMzNzE4IiwiZXhwIjoxNzkwMDYyNDcyfQ.BXic2mI9w3SJKTaR02qTb4sOGo0raLVm1rknuq0qqo8"
 owner_id = [5349573682]
 
-FORCE_JOIN_CHANNEL = -100288927064
-log_channel = -100298789057
-LogDumpGrp = -100318877042
-ext_logs = -100294042438
-subscription_log = -100294560431
+FORCE_JOIN_CHANNEL = -1004213211355
+log_channel = -1004213211355
+LogDumpGrp = -1004213211355
+ext_logs = -1004213211355
+subscription_log = -1004213211355
 
 zipAPI = os.environ.get("ZipAPI", "https://romeo-zip.dev-boi.xyz")
 zipToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjYyMjMzMzcxOCIsInRnX3VzZXJuYW1lIjoibWVnYXRvbiJ9.DaAiOsFR32EvsLcCI2o_wuxMyRLqKSLT9wFRdqpjNio"
