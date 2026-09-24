@@ -1,9 +1,9 @@
 import os
 from pyrogram import Client
 
-API_ID = int(os.environ.get("API_ID", "22370234"))
-API_HASH = os.environ.get("API_HASH", "706badded011715ae115e5ab3bf83f87")
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+API_ID = int(os.environ.get("API_ID", "34422904"))
+API_HASH = os.environ.get("API_HASH", "7e0002469784f47fc08a6b3d93d7ebed")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8809432829: AAEa7Ng1FrmtqC5sF6xyvM4H4A183GgQE48")
 
 bot = Client(
     '『 𝐓𝐇𝐎𝐑 』™',
@@ -16,13 +16,13 @@ BotVersion = "49.0.01"
 my_vercel_api = "https://thor-x1-api.vercel.app"
 my_hrk_api = "https://thor-x1-api.vercel.app"
 my_auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjIyMzMzNzE4IiwiZXhwIjoxNzkwMDYyNDcyfQ.BXic2mI9w3SJKTaR02qTb4sOGo0raLVm1rknuq0qqo8"
-owner_id = [8042993273, 7974818772,1193248592]
+owner_id = [5349573682]
 
-FORCE_JOIN_CHANNEL = -1002889270364
-log_channel = -1002948789057
-LogDumpGrp = -1003188877042
-ext_logs = -1002914042438
-subscription_log = -1002941560431
+FORCE_JOIN_CHANNEL = -100288927064
+log_channel = -100298789057
+LogDumpGrp = -100318877042
+ext_logs = -100294042438
+subscription_log = -100294560431
 
 zipAPI = os.environ.get("ZipAPI", "https://romeo-zip.dev-boi.xyz")
 zipToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjYyMjMzMzcxOCIsInRnX3VzZXJuYW1lIjoibWVnYXRvbiJ9.DaAiOsFR32EvsLcCI2o_wuxMyRLqKSLT9wFRdqpjNio"
