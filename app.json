@@ -1,0 +1,31 @@
+{
+    "name": "𝐓𝐞𝐱𝐭 Uploader 『 𝗠ᴇɢᴀᴛʀᴏɴ 🧑‍💻 』",
+    "description": "Download videos from various websites using this telegram bot",
+    "logo": "https://envs.sh/Lp.jpg",
+    "keywords": ["text-video", "video-extract", "pyrogram"],
+    "repository": "https://github.com/mtgedgg-gtfds/MY-ALL-IN-ONE",
+    "success_url": "https://github.com/mtgedgg-gtfds/MY-ALL-IN-ONE",
+    "stack": "container",
+    "env": {
+        "API_ID": {
+            "description": "Enter your API id You can generate by https://my.telegram.org/auth",
+            "value": "23865844", "required": true
+        },
+        "API_HASH": {
+            "description": "Enter your API Hash You can generate by https://my.telegram.org/auth",
+            "value":  "644ca71d8f3a8bf718cc317c53114d9d", "required": true
+        },
+        "BOT_TOKEN": {
+            "description": "Enter your bot token You can generate by @BotFather",
+            "required": true
+        },
+        "MONGO_URI": {
+            "description": "Enter your MongoDB connection string",
+            "required": false
+        }
+    },
+    
+    "formation": {"worker": {"quantity": 1, "size": "standard-2x"}},
+    "addons": [],
+    "buildpacks": []
+}

@@ -1,0 +1,94 @@
+# pyrogram
+# pyromod
+# tgcrypto
+# pyrofork
+
+# yt-dlp
+# aiohttp
+# aiofiles
+# tqdm
+
+
+# pymongo[srv]
+# motor
+
+# mutagen
+# pillow
+
+# reportlab
+# pymupdf
+# pdfkit
+# wkhtmltopdf
+# bs4
+# lxml
+# html5lib
+
+# tglogging
+# async-lru
+
+
+# ffprobe
+# humanize
+# mediainfo
+# aria2
+# certifi
+# charset-normalizer
+# idna
+# pyaes
+# pycryptodome
+# PySocks
+# python-dotenv
+# soupsieve
+# urllib3
+# websockets
+# pytz
+# speedtest-cli
+# httpx
+# cloudscraper
+
+# cssutils
+# psutil
+
+
+
+
+pyrogram
+pyromod
+TgCrypto
+pyrofork
+yt-dlp
+aiohttp==3.9.1
+aiofiles==23.2.1
+tqdm==4.66.1
+humanize==4.9.0
+httpx==0.25.2
+cloudscraper
+
+pymongo[srv]
+motor
+
+mutagen
+pillow
+ffmpeg-python
+mediainfo
+
+reportlab
+pymupdf
+pdfkit
+bs4
+lxml
+html5lib
+cssutils
+pycryptodome
+async-lru
+python-dotenv
+psutil
+pytz
+speedtest-cli
+soupsieve
+urllib3
+websockets
+
+google-auth-oauthlib
+google-auth
+google-api-python-client
