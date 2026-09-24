@@ -1,4 +1,4 @@
-# Base image update kiya gaya (Bullseye -> Bookworm)
+# Base image - Debian 12 (Bookworm) use kar rahe hain
 FROM python:3.12.3-slim-bookworm
 
 # System dependencies install karo
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
     libssl-dev \
     libglib2.0-0 \
     libmagic1 \
-    libexif6 \
+    libexif12 \
     libxrender-dev \
     libsm6 \
     ca-certificates \
