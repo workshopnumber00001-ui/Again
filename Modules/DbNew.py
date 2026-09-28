@@ -8,7 +8,7 @@ from pyrogram.types import Message, CallbackQuery
 from config import owner_id
 
 IST = pytz.timezone("Asia/Kolkata")
-client = MongoClient("mongodb+srv://montyparashar200_db_user:zfttPnE0wOZUkB6L@cluster0.htnhqi6.mongodb.net/?appName=Cluster0")
+client = MongoClient("mongodb+srv://lotpotcomedy189_db_user:kGz3DlHswNcXNJnW@cluster0.qc9etxz.mongodb.net/?appName=Cluster0")
 db = client["UploaderSubscription"]
 ActiveUsersCollection = db["Authorized_Users_Collection"]
 RevokedUsersCollection = db["Revoked_Users_Collection"]
