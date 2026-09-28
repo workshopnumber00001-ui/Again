@@ -879,6 +879,10 @@ async def input_font_size(bot: Client, msg: CallbackQuery):
 
 @bot.on_message(filters.reply & filters.text & ~filters.command(["cancel"]))
 async def handle_font_size_input(bot: Client, message: Message):
+    # 🟢 FIX: Check if message.from_user exists before accessing .id
+    if not message.from_user:
+        return
+        
     user_id = message.from_user.id
     if pending_size_input.get(user_id):
         try:
@@ -937,6 +941,10 @@ async def input_opacity(bot: Client, msg: CallbackQuery):
 
 @bot.on_message(filters.reply & filters.text & ~filters.command(["cancel"]))
 async def handle_opacity_input(bot: Client, message: Message):
+    # 🟢 FIX: Check if message.from_user exists before accessing .id
+    if not message.from_user:
+        return
+        
     user_id = message.from_user.id
     if pending_opacity_input.get(user_id):
         try:
