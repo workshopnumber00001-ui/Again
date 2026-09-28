@@ -1,6 +1,6 @@
 import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, ForceReply
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, ForceReply, CallbackQuery
 from datetime import datetime
 from config import *
 from DbNew import *
@@ -91,7 +91,11 @@ async def remove_auth_user(bot: Client, msg: Message):
 async def update_subs_plan(bot: Client, msg: Message):
     if len(msg.command) < 2:
         return f"/auth <userId> <Days> <Hour> <Minute> <Plan Type : n, p, c, l>"
-    userId = int(msg.command[1])# days = int(message.text.split(maxsplit=1)[1])
+    try:
+        userId = int(msg.command[1])
+    except ValueError:
+        return await msg.reply("❌ Invalid User ID! Please send a numeric User ID.")
+        
     user = get_user_status(userId, bot.me.username)
     try:
         if user['status'] == 'active':
@@ -134,6 +138,7 @@ Dashcaption = "<blockquote><b>Welcome Captain 『 𝐓𝐇𝐎𝐑 』™!</bloc
 @bot.on_message(filters.command('pannel') & filters.user(owner_id))
 async def showAllData_Users(bot: Client, msg: Message):
     await bot.send_photo(msg.chat.id, photo="Modules/Tools/Thumbnail/AdminDashboard.jpg", caption=Dashcaption, reply_markup=OwnerButton)
+
 @bot.on_callback_query(filters.regex('back\$pannel') & filters.user(owner_id))
 async def back_to_pannel(bot: Client, msg: CallbackQuery):
     await msg.message.edit_media(InputMediaPhoto(media="Modules/Tools/Thumbnail/AdminDashboard.jpg", caption=Dashcaption), reply_markup=OwnerButton)
@@ -276,14 +281,7 @@ async def revoke_access(_: Client, msg: CallbackQuery):
             return await msg.answer(f"⚠️ *{user_id}* not found or Already Revoked or Expired!", show_alert=True)
     except Exception as e:
         return await msg.message.reply_text(f"<b>[✘] Error in Revoking User Access :</b> <i>{e}</i>")
-    
-    
 
-    
-        
-        
-    
-    
 
 # ========================== 7). Plan Validity Modification ==========================
 @bot.on_callback_query(filters.regex(r"updateval:(\d+):(\w+)$") & filters.user(owner_id))
@@ -392,6 +390,12 @@ async def set_dump_channel(bot: Client, msg: CallbackQuery):
     try:
         Editable = await msg.message.reply_text("Send the ThreadId where you want to DUmps.")
         Input: Message = await bot.ask(msg.message.chat.id, "")
+        
+        # 🟢 FIX: Check karein ki input sahi number hai ya nahi
+        if not Input.text or not Input.text.isdigit():
+            await Input.delete()
+            return await Editable.edit_text("❌ Invalid Thread ID! Please send a valid numeric Thread ID.")
+            
         await Input.delete()
         await Editable.delete()
     
@@ -409,6 +413,12 @@ async def set_dump_channel(bot: Client, msg: CallbackQuery):
 async def get_user_logs(bot: Client, msg: CallbackQuery):
     Editable = await msg.message.reply_text("Send the UserId to get his Subscription History.")
     input: Message = await bot.ask(msg.message.chat.id, "")
+    
+    # 🟢 FIX: Check karein ki input sahi number hai ya nahi
+    if not input.text or not input.text.isdigit():
+        await input.delete()
+        return await Editable.edit_text("❌ Invalid User ID! Please send a valid numeric User ID.")
+        
     user_id = int(input.text)
     await input.delete()
     
@@ -450,5 +460,4 @@ async def set_CreditName(bot: Client, msg: CallbackQuery):
         else:
             return await msg.answer(f"UserId {userId} Not Found!", show_alert=True)
     except Exception as e:
-        return await Editable.edit_text(f"❌ <b>Unable to Update CreditName :</b> {e}")    
-    
+        return await Editable.edit_text(f"❌ <b>Unable to Update CreditName :</b> {e}")
