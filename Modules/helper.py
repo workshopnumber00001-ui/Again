@@ -193,28 +193,52 @@ async def download_send_tests(bot: Client, m, session: aiohttp.ClientSession, na
     try:
         if "/appx/test/v3/" in url:
             async with session.get(url, headers={'authorization': my_auth_token}) as r:
-                resp = await r.json()
-            TestResp = requests.get(resp['url']).text
-            HtmlFile = await generate_Mock_HTML(name, resp['time'], resp['marks'], resp['ques'], TestResp)
+                try:
+                    resp = await r.json()
+                except Exception:
+                    resp = None
+            if not resp or not isinstance(resp, dict):
+                raise ValueError("Invalid response from Appx Test API")
+            TestResp = requests.get(resp.get('url', '')).text
+            HtmlFile = await generate_Mock_HTML(name, resp.get('time', 0), resp.get('marks', 0), resp.get('ques', 0), TestResp)
+        
         elif "/appx/quiz/" in url:
             async with session.get(url, headers={'authorization': my_auth_token}) as r:
-                resp = await r.json()
+                try:
+                    resp = await r.json()
+                except Exception:
+                    resp = None
+            if not resp:
+                raise ValueError("Invalid response from Appx Quiz API")
             HtmlFile = await make_APPX_quiz_HTML(name, resp)
+            
         elif "https://www.testranking.in/?testId=" in url:
-            resp = requests.get(f"https://www.testranking.in/admin/api/questions-solutions-mob/{url.split('testId=')[1]}/en" , headers={'authorization': my_auth_token}).json()
+            try:
+                resp = requests.get(f"https://www.testranking.in/admin/api/questions-solutions-mob/{url.split('testId=')[1]}/en" , headers={'authorization': my_auth_token}).json()
+            except Exception:
+                resp = None
+                
+            if not resp or not isinstance(resp, dict) or 'data' not in resp:
+                raise ValueError("Invalid response from TestRanking API")
+                
             NewData = []
             total_questions = 0
-            for item in resp['data']:
-                for idx, data in enumerate(item['all_questions'], 1):
+            for item in resp.get('data', []):
+                if not item or not isinstance(item, dict): continue
+                for idx, data in enumerate(item.get('all_questions', []), 1):
+                    if not data or not isinstance(data, dict): continue
                     Ques = f"{data.get('question_en')}<br>{data.get('question_hi')}"
                     negative_marking = data.get('negative_score', '0')
                     NewData.append({"sr_no": idx, "question": Ques, "option_1": data.get('option_en_1'), "option_2": data.get('option_en_2'), "option_3": data.get('option_en_3'), "option_4": data.get('option_en_4'), "answer": data.get('answer_en'), "negative_marking": negative_marking, "positive_marking": data.get('marks'), "solution_heading": "Full Solution", "solution_text":data.get('solution_en')})
                     total_questions += 1
             HtmlFile = await generate_Mock_HTML(name, total_questions*1, total_questions*2, total_questions, NewData)
+            
         elif "https://u1.oliveboard.in/exams/solution/" in url:
             HtmlFile = await generate_OliveBoard_Test(name, url)
+            
         elif "adda247.com/" in url and url.endswith('.json'):
             HtmlFile = await generate_Adda247_Test(name, url)
+            
         await asyncio.sleep(2)
         if os.path.exists(HtmlFile):
             SentHTML = await bot.send_document(m.chat.id, HtmlFile, caption=cchtml, thumb=thumb2, message_thread_id=thread_id)
@@ -222,7 +246,7 @@ async def download_send_tests(bot: Client, m, session: aiohttp.ClientSession, na
             return SentHTML
     except Exception as e:
         logging.error(f"❌ Error in Making Test Html : {e}")
-        if os.path.exists(HtmlFile): os.remove(HtmlFile)
+        if 'HtmlFile' in locals() and os.path.exists(HtmlFile): os.remove(HtmlFile)
 
 async def pw_download_video(url, quality, name, keys):
     for attempt in range(1, 4):
@@ -334,8 +358,12 @@ async def wait_for_drm_keys(session: aiohttp.ClientSession, url: str, my_auth_to
         try:
             if "/drm" in url:
                 async with session.get(f'{my_hrk_api}/classp?url={url}&authorization={my_auth_token}') as r:
-                    cp_resp = await r.json()
-                if cp_resp and cp_resp.get("keys") and cp_resp.get('url'):
+                    try:
+                        cp_resp = await r.json()
+                    except Exception:
+                        cp_resp = None
+                        
+                if cp_resp and isinstance(cp_resp, dict) and cp_resp.get("keys") and cp_resp.get('url'):
                     keys_arr = cp_resp['keys']
                     CpDrmUrl = cp_resp['url']
                     logging.info(f"[✔] Cp-DRM Keys Found {keys_arr}")
@@ -344,8 +372,12 @@ async def wait_for_drm_keys(session: aiohttp.ClientSession, url: str, my_auth_to
                     raise ValueError(f"Unable to fetch Drm-Keys : {cp_resp}")
             else:
                 async with session.get(f'{my_hrk_api}/classp?url={url}&authorization={my_auth_token}') as r2:
-                    resp = await r2.json()
-                if resp.get("url"):
+                    try:
+                        resp = await r2.json()
+                    except Exception:
+                        resp = None
+                        
+                if resp and isinstance(resp, dict) and resp.get("url"):
                     SignedUrl = resp['url']
                     return SignedUrl, None
                 else:
