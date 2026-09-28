@@ -424,8 +424,12 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                         else:
                             async with session.get(f"{my_hrk_api}/pw/mpd?url={url}&token={PwToken}&authorization={my_auth_token}") as r:
                                 api_resp = await r.json()
-                            keys = api_resp.get('keys')
-                            nurl = api_resp.get('url2')
+                            if not api_resp or not isinstance(api_resp, dict):
+                                keys = None
+                                nurl = None
+                            else:
+                                keys = api_resp.get('keys')
+                                nurl = api_resp.get('url2')
                             if not keys or not nurl:
                                 f_text = SendErrorMessage(count, "Unable Fetch Keys. Token may Expired!", name1, url, CR)
                                 SentMsg = await bot.send_message(m.chat.id, f_text, message_thread_id=thread_id)
@@ -440,8 +444,12 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                         else:
                             async with session.get(f"{my_hrk_api}/pw/mpd?url={url}&token={PwToken}&authorization={my_auth_token}") as r:
                                 api_resp = await r.json()
-                            keys = api_resp.get('keys')
-                            nurl = api_resp.get('url2')
+                            if not api_resp or not isinstance(api_resp, dict):
+                                keys = None
+                                nurl = None
+                            else:
+                                keys = api_resp.get('keys')
+                                nurl = api_resp.get('url2')
                             if not keys or not nurl:
                                 f_text = SendErrorMessage(count, "Unable Fetch Keys. Token may Expired!", name1, url, CR)
                                 SentMsg = await bot.send_message(m.chat.id, f_text, message_thread_id=thread_id)
@@ -470,8 +478,12 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                         d_url = url.replace("https://sec-prod.pwskills.com/", "")
                         async with session.get(f"{my_hrk_api}/pw/skill?{d_url}&token={PwToken}&authorization={my_auth_token}") as r:
                             api_resp = await r.json()
-                        keys = api_resp.get('keys')
-                        nurl = api_resp.get('url2')
+                        if not api_resp or not isinstance(api_resp, dict):
+                            keys = None
+                            nurl = None
+                        else:
+                            keys = api_resp.get('keys')
+                            nurl = api_resp.get('url2')
                         if not keys or not nurl:
                             f_text = SendErrorMessage(count, "Unable Fetch Keys. Token may Expired!", name1, url, CR)
                             SentMsg = await bot.send_message(m.chat.id, f_text, message_thread_id=thread_id)
@@ -561,12 +573,14 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                         target_num = quality_map.get(target_quality_str, 480)
                         available = []
                         for item in links_list:
+                            if not item or not isinstance(item, dict):
+                                continue
                             q_str = item.get('quality')
                             if q_str and q_str in quality_map:
                                 available.append((quality_map[q_str], item))
                         if not available:
                             # If no recognized quality, return first item
-                            return links_list[0]
+                            return links_list[0] if links_list else None
                         # Sort by quality ascending
                         available.sort(key=lambda x: x[0])
                         # Find first with quality >= target
@@ -579,9 +593,13 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                     for attempt in range(1, 4):
                         try:
                             async with session.get(url1) as r:
-                                resp = await r.json()
+                                try:
+                                    resp = await r.json()
+                                except Exception:
+                                    resp = None
+
                             if "appx/vid/" in url:
-                                if resp.get('status') == 200 and resp.get('data'):
+                                if resp and isinstance(resp, dict) and resp.get('status') == 200 and resp.get('data'):
                                     data = resp['data']
                                     AppxThumb = data.get('Thumbnail') or data.get('thumbnail')
                                     
@@ -597,7 +615,7 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                                     if enc_links:
                                         chosen = select_best_quality(enc_links, target_quality_str)
                                     if chosen:
-                                        d_url = chosen['path']
+                                        d_url = chosen.get('path')
                                         key = chosen.get('key')
                                         if key and not key.isdigit():
                                             key = base64.b64decode(key).decode('utf-8')
@@ -605,7 +623,7 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                                     elif dl_links:
                                         chosen = select_best_quality(dl_links, target_quality_str)
                                         if chosen:
-                                            d_url = chosen['path']
+                                            d_url = chosen.get('path')
                                             key = None
                                             break
                                     else:
@@ -632,9 +650,13 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                                 # ✅ FIX: Handle responses with or without 'status' field and root-level pdf_link2
                                 pdf_url = None
                                 is_success = True
-                                if 'status' in resp:
-                                    if resp['status'] != 200:
-                                        is_success = False
+                                if resp and isinstance(resp, dict):
+                                    if 'status' in resp:
+                                        if resp['status'] != 200:
+                                            is_success = False
+                                else:
+                                    is_success = False
+                                    
                                 if is_success:
                                     data = resp.get('data')
                                     # Check all possible locations for PDF URL
@@ -652,7 +674,7 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                                     else:
                                         logging.info(f"⚠️ No PDF URL Found in response: {resp}")
                                 else:
-                                    logging.info(f"⚠️ PDF API returned non-200 status: {resp}")
+                                    logging.info(f"⚠️ PDF API returned non-200 status or null response: {resp}")
                         except Exception as exc:
                             last_exception = exc
                             if attempt < 3:
@@ -688,8 +710,12 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                 elif "thor-x1-api.vercel.app" in url and "/appx/v3/" in url:
                     try:
                         async with session.get(url) as resp:
-                            api_data = await resp.json()
-                        if api_data.get("status") != 200 or not api_data.get("data"):
+                            try:
+                                api_data = await resp.json()
+                            except Exception:
+                                api_data = None
+
+                        if not api_data or not isinstance(api_data, dict) or api_data.get("status") != 200 or not api_data.get("data"):
                             raise ValueError("Invalid response from Appx API")
                         video_data = api_data["data"]
 
@@ -702,9 +728,9 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                                 return None
                             qual_nums = {'144p':144,'240p':240,'360p':360,'480p':480,'720p':720,'1080p':1080}
                             target_num = qual_nums.get(target_q, 720)
-                            available = [(qual_nums.get(item.get('quality'), 0), item) for item in links_list if item.get('quality') in qual_nums]
+                            available = [(qual_nums.get(item.get('quality'), 0), item) for item in links_list if item and isinstance(item, dict) and item.get('quality') in qual_nums]
                             if not available:
-                                return links_list[0]
+                                return links_list[0] if links_list else None
                             available.sort(key=lambda x: x[0])
                             for num, item in available:
                                 if num >= target_num:
@@ -715,9 +741,9 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                         enc_links = video_data.get("encrypted_links", [])
                         chosen = select_best_quality_apex(enc_links, target_quality_str)
                         if chosen:
-                            d_url = chosen["path"]
-                            key = chosen["key"]
-                            if not key.isdigit():
+                            d_url = chosen.get("path")
+                            key = chosen.get("key")
+                            if key and not key.isdigit():
                                 key = base64.b64decode(key).decode('utf-8')
                             download_cmd = f'yt-dlp "{d_url}" --add-header "User-Agent:okhttp/5.0.0-alpha.2" --add-header "Accept-Encoding:gzip" --add-header "Referer:https://appx-play.akamai.net.in/" -o "{name}.mkv"'
                             filename = await helper.download_video(d_url, download_cmd, name)
@@ -731,7 +757,7 @@ async def dl_upl_process(bot: Client, m: Message, session: aiohttp.ClientSession
                             chosen = select_best_quality_apex(dl_links, target_quality_str)
                             if not chosen:
                                 raise Exception("No suitable video link found")
-                            d_url = chosen["path"]
+                            d_url = chosen.get("path")
                             ytf = f"b[height<={quality}]/bv[height<={quality}]+ba/b/bv+ba"
                             cmd = f'yt-dlp -f "{ytf}" --no-warning "{d_url}" -o "{name}.%(ext)s"'
                             filename = await helper.download_video(d_url, cmd, name)
